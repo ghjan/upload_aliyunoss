@@ -42,7 +42,7 @@ def get_token(dir_name=upload_dir):
     array_item = []
     array_item.append('starts-with')
     array_item.append('$key')
-    array_item.append(dir_name or upload_dir)
+    array_item.append(upload_dir)
     condition_array.append(array_item)
     policy_dict['conditions'] = condition_array
     policy = json.dumps(policy_dict).strip()

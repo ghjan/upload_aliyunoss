@@ -43,7 +43,7 @@ def get_token(dir_name='user-dir'):
     array_item = []
     array_item.append('starts-with')
     array_item.append('$key')
-    array_item.append(dir_name or upload_dir)
+    array_item.append(upload_dir)
     condition_array.append(array_item)
     policy_dict['conditions'] = condition_array
     policy = json.dumps(policy_dict).strip()
@@ -70,8 +70,8 @@ def get_token(dir_name='user-dir'):
 urls = (
     '/testoss/(.*)', 'testoss',
     '/token/(.*)', 'token',
-    '/todo', 'todo',
-    '/add', 'add',
+    # '/todo', 'todo',
+    # '/add', 'add',
     # '/(.*)', 'index',
 )
 app = web.application(urls, globals())
@@ -85,24 +85,24 @@ class testoss:
             info = render.testoss()
         return info
 
+#
+# class add:
+#     def POST(self):
+#         i = web.input()
+#         if hasattr(web, 'insert'):
+#             n = web.insert('todo', title=i.title)
+#         else:
+#             db.insert('todo', title=i.title)
+#         web.seeother('/todo')
 
-class add:
-    def POST(self):
-        i = web.input()
-        if hasattr(web, 'insert'):
-            n = web.insert('todo', title=i.title)
-        else:
-            db.insert('todo', title=i.title)
-        web.seeother('/todo')
 
-
-class todo:
-    def GET(self):
-        if hasattr(web, 'select'):
-            todos = web.select('todo')
-        else:
-            todos = db.select('todo')
-        return render.todo(todos)
+# class todo:
+#     def GET(self):
+#         if hasattr(web, 'select'):
+#             todos = web.select('todo')
+#         else:
+#             todos = db.select('todo')
+#         return render.todo(todos)
 
 
 class index:
@@ -118,14 +118,14 @@ class token:
         return token
 
 
-web.config.db_parameters = dict(
-    dbn='mysql',
-    user='tokenuser',
-    pw='123456%$',
-    db='token'
-)
-
-db = web.database(**web.config.db_parameters)
+# web.config.db_parameters = dict(
+#     dbn='mysql',
+#     user='tokenuser',
+#     pw='123456%$',
+#     db='token'
+# )
+#
+# db = web.database(**web.config.db_parameters)
 
 if __name__ == "__main__":
     app.run()
