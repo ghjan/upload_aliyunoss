@@ -1,0 +1,2 @@
+# webpy cd ~ &&  wget http://webpy.org/static/web.py-0.38.tar.gz && tar -zxvf web.py-0.38.tar.gz && cd web.py-0.38 && sudo python setup.py install
+oss2
