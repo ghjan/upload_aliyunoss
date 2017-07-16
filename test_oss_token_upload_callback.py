@@ -14,7 +14,7 @@ import hmac
 from hashlib import sha1 as sha
 
 from settings import *
-
+import redis
 
 def get_iso_8601(expire):
     print expire
