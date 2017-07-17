@@ -11,8 +11,8 @@ g_object_name = ''
 g_object_name_type = ''
 now = timestamp = Date.parse(new Date()) / 1000;
 token = null;
-tokenUrl = 'http://localhost:8080/token/'
-floor_tokenUrl = 'http://localhost:8080/token/floor'
+tokenUrl = '/token/'
+floor_tokenUrl = '/token/floor'
 
 function check_object_radio() {
     var tt = document.getElementsByName('myradio');
