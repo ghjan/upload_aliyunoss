@@ -87,18 +87,24 @@ class MyHTTPRequestHandler(BaseHTTPRequestHandler):
 
         # do something accoding to callback_body
         if callback_body:
-            dict_callback_body = json.loads(callback_body.decode('base64'))
-            logging.debug("dict_callback_body:{}".format(dict_callback_body))
-            callbackUrl = dict_callback_body.get('callbackUrl')
-            valid = callbackUrl and callbackUrl in LIST_VALID_CALLBACK_URL
-            logging.debug("valid:{}".format(valid))
-            callbackBody = dict_callback_body.get('callbackBody')
-            logging.debug('callbackBody:{}'.format(callbackBody))
-            list_data = callbackBody.split('&')
+            logging.debug("type(callback_body):{}".format(type(callback_body)))
+            list_data = callback_body.split('&')
             dict_data = {}
             for _ in list_data:
                 kv = _.split('=')
                 dict_data[kv[0]] = kv[1]
+            # dict_callback_body = json.loads(callback_body.decode('base64'))
+            # logging.debug("dict_callback_body:{}".format(dict_callback_body))
+            # callbackUrl = dict_callback_body.get('callbackUrl')
+            # valid = callbackUrl and callbackUrl in LIST_VALID_CALLBACK_URL
+            # logging.debug("valid:{}".format(valid))
+            # callbackBody = dict_callback_body.get('callbackBody')
+            # logging.debug('callbackBody:{}'.format(callbackBody))
+            # list_data = callbackBody.split('&')
+            # dict_data = {}
+            # for _ in list_data:
+            #     kv = _.split('=')
+            #     dict_data[kv[0]] = kv[1]
             logging.debug("dict_data:{}".format(dict_data))
         # response to OSS
         resp_body = '{"Status":"OK"}'
