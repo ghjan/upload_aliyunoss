@@ -48,10 +48,11 @@ class MyHTTPRequestHandler(BaseHTTPRequestHandler):
         # get authorization
         authorization_base64 = self.headers['authorization']
         authorization = authorization_base64.decode('base64')
-
+        logging.debug("authorization:{}".format(authorization))
         # get callback body
         content_length = self.headers['content-length']
         callback_body = self.rfile.read(int(content_length))
+        logging.debug("callback_body:{}".format(callback_body))
 
         # compose authorization string
         auth_str = ''
@@ -60,7 +61,7 @@ class MyHTTPRequestHandler(BaseHTTPRequestHandler):
             auth_str = self.path + '\n' + callback_body
         else:
             auth_str = urllib2.unquote(self.path[0:pos]) + self.path[pos:] + '\n' + callback_body
-        print auth_str
+        logging.debug("auth_str:{}".format(auth_str))
 
         # verify authorization
         auth_md5 = md5.new(auth_str).digest()
