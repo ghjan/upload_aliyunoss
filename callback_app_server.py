@@ -37,7 +37,6 @@ class MyHTTPRequestHandler(BaseHTTPRequestHandler):
             pub_key_url = pub_key_url_base64.decode('base64')
             url_reader = urllib2.urlopen(pub_key_url)
             pub_key = url_reader.read()
-            logging.debug("pub_key:{}".format(pub_key))
         except Exception as e:
             logging.error('exception catched, pub_key_url : ' + pub_key_url)
             logging.error('Get pub key failed!')
@@ -49,11 +48,9 @@ class MyHTTPRequestHandler(BaseHTTPRequestHandler):
         # get authorization
         authorization_base64 = self.headers['authorization']
         authorization = authorization_base64.decode('base64')
-        logging.debug("authorization:{}".format(authorization))
         # get callback body
         content_length = self.headers['content-length']
         callback_body = self.rfile.read(int(content_length))
-        logging.debug("callback_body:{}".format(callback_body))
 
         # compose authorization string
         auth_str = ''
@@ -62,16 +59,13 @@ class MyHTTPRequestHandler(BaseHTTPRequestHandler):
             auth_str = self.path + '\n' + callback_body
         else:
             auth_str = urllib2.unquote(self.path[0:pos]) + self.path[pos:] + '\n' + callback_body
-        logging.debug("auth_str:{}".format(auth_str))
 
         # verify authorization
         auth_md5 = md5.new(auth_str).digest()
         bio = BIO.MemoryBuffer(pub_key)
         rsa_pub = RSA.load_pub_key_bio(bio)
-        logging.debug("rsa_pub:{}".format(rsa_pub))
         try:
             result = rsa_pub.verify(auth_md5, authorization, 'md5')
-            logging.debug("result of rsa_pub.verify:{}".format(result))
         except Exception as e:
             logging.error('exception catched when rsa_pub.verify')
             logging.error(e)
@@ -87,24 +81,22 @@ class MyHTTPRequestHandler(BaseHTTPRequestHandler):
 
         # do something accoding to callback_body
         if callback_body:
-            logging.debug("type(callback_body):{}".format(type(callback_body)))
-            list_data = callback_body.split('&')
-            dict_data = {}
-            for _ in list_data:
-                kv = _.split('=')
-                dict_data[kv[0]] = kv[1]
-            # dict_callback_body = json.loads(callback_body.decode('base64'))
-            # logging.debug("dict_callback_body:{}".format(dict_callback_body))
-            # callbackUrl = dict_callback_body.get('callbackUrl')
-            # valid = callbackUrl and callbackUrl in LIST_VALID_CALLBACK_URL
-            # logging.debug("valid:{}".format(valid))
-            # callbackBody = dict_callback_body.get('callbackBody')
-            # logging.debug('callbackBody:{}'.format(callbackBody))
-            # list_data = callbackBody.split('&')
-            # dict_data = {}
-            # for _ in list_data:
-            #     kv = _.split('=')
-            #     dict_data[kv[0]] = kv[1]
+            if type(callback_body) == str:
+                list_data = callback_body.split('&')
+                dict_data = {}
+                for _ in list_data:
+                    kv = _.split('=')
+                    dict_data[kv[0]] = kv[1]
+            else:
+                dict_callback_body = json.loads(callback_body.decode('base64'))
+                callbackUrl = dict_callback_body.get('callbackUrl')
+                valid = callbackUrl and callbackUrl in LIST_VALID_CALLBACK_URL
+                callbackBody = dict_callback_body.get('callbackBody')
+                list_data = callbackBody.split('&')
+                dict_data = {}
+                for _ in list_data:
+                    kv = _.split('=')
+                    dict_data[kv[0]] = kv[1]
             logging.debug("dict_data:{}".format(dict_data))
         # response to OSS
         resp_body = '{"Status":"OK"}'
