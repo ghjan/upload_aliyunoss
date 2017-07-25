@@ -8,6 +8,10 @@ from M2Crypto import RSA
 from M2Crypto import BIO
 import json
 from settings import *
+import os
+import logging
+
+logging.basicConfig(filename=os.path.join(os.getcwd(), 'callback_server_log.txt'), level=logging.DEBUG)
 
 LIST_VALID_CALLBACK_URL = [_.get('callback_url') for _ in oss_data.values() if
                            _.get('callback_url')]
@@ -34,8 +38,8 @@ class MyHTTPRequestHandler(BaseHTTPRequestHandler):
             url_reader = urllib2.urlopen(pub_key_url)
             pub_key = url_reader.read()
         except:
-            print 'pub_key_url : ' + pub_key_url
-            print 'Get pub key failed!'
+            logging.error('pub_key_url : ' + pub_key_url)
+            logging.error('Get pub key failed!')
             self.send_response(400)
             self.end_headers()
             return
@@ -67,9 +71,9 @@ class MyHTTPRequestHandler(BaseHTTPRequestHandler):
             result = False
 
         if not result:
-            print 'Authorization verify failed!'
-            print 'Public key : %s' % (pub_key)
-            print 'Auth string : %s' % (auth_str)
+            logging.error('Authorization verify failed!')
+            logging.error('Public key : %s' % (pub_key))
+            logging.error('Auth string : %s' % (auth_str))
             self.send_response(400)
             self.end_headers()
             return
@@ -80,13 +84,13 @@ class MyHTTPRequestHandler(BaseHTTPRequestHandler):
             callbackUrl = dict_callback_body.get('callbackUrl')
             valid = callbackUrl and callbackUrl in LIST_VALID_CALLBACK_URL
             callbackBody = dict_callback_body.get('callbackBody')
-            print('valid:{}, callbackBody:{}'.format(valid, callbackBody))
+            logging.debug('valid:{}, callbackBody:{}'.format(valid, callbackBody))
             list_data = callbackBody.split('&')
             dict_data = {}
             for _ in list_data:
                 kv = _.split('=')
                 dict_data[kv[0]] = kv[1]
-            print("dict_data:{}".format(dict_data))
+            logging.debug("dict_data:{}".format(dict_data))
         # response to OSS
         resp_body = '{"Status":"OK"}'
         self.send_response(200)
@@ -107,4 +111,5 @@ if '__main__' == __name__:
     server_port = 23450
 
     server = MyHTTPServer(server_ip, server_port)
+    logging.debug('start to run callback server')
     server.serve_forever()
