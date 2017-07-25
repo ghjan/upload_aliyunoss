@@ -37,8 +37,9 @@ class MyHTTPRequestHandler(BaseHTTPRequestHandler):
             pub_key_url = pub_key_url_base64.decode('base64')
             url_reader = urllib2.urlopen(pub_key_url)
             pub_key = url_reader.read()
+            logging.debug("pub_key:{}".format(pub_key))
         except:
-            logging.error('pub_key_url : ' + pub_key_url)
+            logging.error('exception catched, pub_key_url : ' + pub_key_url)
             logging.error('Get pub key failed!')
             self.send_response(400)
             self.end_headers()
