@@ -88,10 +88,12 @@ class MyHTTPRequestHandler(BaseHTTPRequestHandler):
         # do something accoding to callback_body
         if callback_body:
             dict_callback_body = json.loads(callback_body.decode('base64'))
+            logging.debug("dict_callback_body:{}".format(dict_callback_body))
             callbackUrl = dict_callback_body.get('callbackUrl')
             valid = callbackUrl and callbackUrl in LIST_VALID_CALLBACK_URL
+            logging.debug("valid:{}".format(valid))
             callbackBody = dict_callback_body.get('callbackBody')
-            logging.debug('valid:{}, callbackBody:{}'.format(valid, callbackBody))
+            logging.debug('callbackBody:{}'.format(callbackBody))
             list_data = callbackBody.split('&')
             dict_data = {}
             for _ in list_data:
