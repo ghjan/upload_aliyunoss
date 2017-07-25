@@ -38,9 +38,10 @@ class MyHTTPRequestHandler(BaseHTTPRequestHandler):
             url_reader = urllib2.urlopen(pub_key_url)
             pub_key = url_reader.read()
             logging.debug("pub_key:{}".format(pub_key))
-        except:
+        except Exception as e:
             logging.error('exception catched, pub_key_url : ' + pub_key_url)
             logging.error('Get pub key failed!')
+            logging.error(e)
             self.send_response(400)
             self.end_headers()
             return
@@ -67,9 +68,13 @@ class MyHTTPRequestHandler(BaseHTTPRequestHandler):
         auth_md5 = md5.new(auth_str).digest()
         bio = BIO.MemoryBuffer(pub_key)
         rsa_pub = RSA.load_pub_key_bio(bio)
+        logging.debug("rsa_pub:{}".format(rsa_pub))
         try:
             result = rsa_pub.verify(auth_md5, authorization, 'md5')
+            logging.debug("result of rsa_pub.verify:{}".format(result))
         except Exception as e:
+            logging.error('exception catched when rsa_pub.verify')
+            logging.error(e)
             result = False
 
         if not result:
